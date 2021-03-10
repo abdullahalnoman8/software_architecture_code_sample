@@ -1,0 +1,31 @@
+
+
+docker network create service-tracker-db // Create a network
+
+docker network ls  // check the network is available
+// run the mysql container in docker
+docker container run --name mysqldb --network service-tracker-db -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=service_tracker_db -d mysql:8.0.22
+
+docker container logs -f ae // check if container has started correctly using logs command
+
+docker container exec -it ae bash // check the database is created
+
+// create docker image
+docker image build -t service-a
+docker image build -t simulator-service
+
+// run docker images as a container
+docker container run --network service-tracker-db --name service-a-container -p 8080:8080 -d service-a
+docker container run --network service-tracker-db --name simulator-service-container -p 8081:8081 -d simulator-service
+
+// tag and push command for deploying in docker hub
+docker tag service-a abdullah1122/cloud_deployment:service-a-0.0.1-SNAPSHOT
+docker push abdullah1122/cloud_deployment:service-a-0.0.1-SNAPSHOT
+
+docker tag simulator-service abdullah1122/cloud_deployment:simulator-service-0.0.1-SNAPSHOT
+docker push abdullah1122/cloud_deployment:simulator-service-0.0.1-SNAPSHOT
+
+docker tag mysql:8.0.22 abdullah1122/cloud_deployment:mysql-0.0.1-SNAPSHOT
+docker push abdullah1122/cloud_deployment:mysql-0.0.1-SNAPSHOT
+
+docker container logs -f 34
